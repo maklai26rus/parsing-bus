@@ -54,13 +54,9 @@ def get_url(url):
             str_road = start_road + ' - ' + end_road
             ticket_list.append(
                 f"{sts_start}, {start_time}, {end_time}, {travel_time}, {str_price}, {str_road}")
-            # ticket_list.append(
-            #     f"{start_bilet}, '-', {end_bilet}, {start_time}, {end_time}, {travel_time}, {price_adult}, '/',{price_children}, {start_road}, '-', {end_road}")
             with open('test.cvc', "a", encoding="utf-8") as file:
                 for line in ticket_list:
                     file.write(f"{line}\n")
-
-        # break
 
 
 def main():
