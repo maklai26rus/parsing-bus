@@ -8,7 +8,6 @@ list_bus = []
 
 
 def get_url(url):
-    # html = requests.get(url)
 
     response = requests.get(url)
 
