@@ -15,7 +15,6 @@ def get_url(url):
     pages_count = int(soup.find("ul", class_="pager").find_all("a")[-1].text)
 
     for page in range(0, pages_count):
-    # for page in range(0, 1):
         url_page = f"https://ros-bilet.ru/perevozchik/evrotrans-ip-yacunov-sp?field_city_tid=&field_city_arrival_tid=&page=0%2C{page}"
         response = requests.get(url_page)
         soup = BeautifulSoup(response.text, "lxml")
@@ -24,8 +23,6 @@ def get_url(url):
         for fi in flight_items:
             links_page = fi.find("a").get('href')
             url_bilet = dop_url + links_page
-            print(url_bilet)
-            # url_bilet = "https://ros-bilet.ru/reys/abinsk/aleksandrovskoe-5192458"
             response = requests.get(url_bilet)
             soup = BeautifulSoup(response.text, "lxml")
             road_bilet = soup.find_all('div', class_='bus-stantion-info-text')
@@ -33,7 +30,6 @@ def get_url(url):
             start_bilet = road_bilet[0].text.split(',')[0]
             end_bilet = road_bilet[1].text.split(',')[0]
 
-            # field_item_even = soup.find_all('div', class_="field-item even")
             field_item_even = soup.find_all('div', class_="field-item")
             if len(field_item_even) != 6:
                 price_adult = field_item_even[4].text.strip()
@@ -53,16 +49,18 @@ def get_url(url):
             travel_time_soup = soup.find_all('div', class_="tline even")
             travel_time = travel_time_soup[1].find('div', class_='two tap').text.strip()
 
+            sts_start = start_bilet + ' - ' + end_bilet
+            str_price = price_adult + ' / ' + price_children
+            str_road = start_road + ' - ' + end_road
             ticket_list.append(
-                f"{start_bilet}, '-', {end_bilet}, {start_time}, {end_time}, {travel_time}, {price_adult}, '/',{price_children}, {start_road}, '-', {end_road}")
+                f"{sts_start}, {start_time}, {end_time}, {travel_time}, {str_price}, {str_road}")
+            # ticket_list.append(
+            #     f"{start_bilet}, '-', {end_bilet}, {start_time}, {end_time}, {travel_time}, {price_adult}, '/',{price_children}, {start_road}, '-', {end_road}")
             with open('test.cvc', "a", encoding="utf-8") as file:
                 for line in ticket_list:
                     file.write(f"{line}\n")
 
-            # print(start_bilet, '-', end_bilet, start_time, end_time, travel_time, price_adult, '/', price_children, start_road, '-',
-            #       end_road)
-            #
-            # break
+        # break
 
 
 def main():
