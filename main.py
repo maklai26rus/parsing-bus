@@ -2,10 +2,8 @@ from bs4 import BeautifulSoup
 import requests
 
 URL = "https://ros-bilet.ru/perevozchik/evrotrans-ip-yacunov-sp?field_city_tid=&field_city_arrival_tid=&page=0%2C428"
-dop_url = "https://ros-bilet.ru"
-persons_url = []
-list_bus = []
-ticket_list = []
+URL_CARD = "https://ros-bilet.ru"
+FLIGHT_DATA = []
 
 
 def get_url(url):
@@ -22,13 +20,13 @@ def get_url(url):
         flight_items = soup.find_all("td", class_="views-field views-field-path")
         for fi in flight_items:
             links_page = fi.find("a").get('href')
-            url_bilet = dop_url + links_page
-            response = requests.get(url_bilet)
+            url_ticket = URL_CARD + links_page
+            response = requests.get(url_ticket)
             soup = BeautifulSoup(response.text, "lxml")
-            road_bilet = soup.find_all('div', class_='bus-stantion-info-text')
+            data_ticket_road_soup = soup.find_all('div', class_='bus-stantion-info-text')
 
-            start_bilet = road_bilet[0].text.split(',')[0]
-            end_bilet = road_bilet[1].text.split(',')[0]
+            start_ticket_route = data_ticket_road_soup[0].text.split(',')[0]
+            end_ticket_route = data_ticket_road_soup[1].text.split(',')[0]
 
             field_item_even = soup.find_all('div', class_="field-item")
             if len(field_item_even) != 6:
@@ -42,20 +40,20 @@ def get_url(url):
                 start_road = field_item_even[5].text.split(',')[0]
                 end_road = field_item_even[5].text.split(',')[-1]
 
-            time_default = soup.find_all('div', class_="time-default")
-            start_time = time_default[0].text.strip()
-            end_time = time_default[1].text.strip()
+            time_default_soup = soup.find_all('div', class_="time-default")
+            start_time_route = time_default_soup[0].text.strip()
+            end_time_route = time_default_soup[1].text.strip()
 
             travel_time_soup = soup.find_all('div', class_="tline even")
             travel_time = travel_time_soup[1].find('div', class_='two tap').text.strip()
 
-            sts_start = start_bilet + ' - ' + end_bilet
-            str_price = price_adult + ' / ' + price_children
-            str_road = start_road + ' - ' + end_road
-            ticket_list.append(
-                f"{sts_start}, {start_time}, {end_time}, {travel_time}, {str_price}, {str_road}")
-            with open('test.cvc', "a", encoding="utf-8") as file:
-                for line in ticket_list:
+            _sts_start_route = start_ticket_route + ' - ' + end_ticket_route
+            _str_price = price_adult + ' / ' + price_children
+            _str_road = start_road + ' - ' + end_road
+            FLIGHT_DATA.append(
+                f"{_sts_start_route}, {start_time_route}, {end_time_route}, {travel_time}, {_str_price}, {_str_road}")
+            with open('bus_route.cvc', "a", encoding="utf-8") as file:
+                for line in FLIGHT_DATA:
                     file.write(f"{line}\n")
 
 
