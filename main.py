@@ -18,15 +18,20 @@ def get_url(url):
         soup = BeautifulSoup(response.text, "lxml")
 
         flight_items = soup.find_all("td", class_="views-field views-field-path")
-        for fi in flight_items:
-            links_page = fi.find("a").get('href')
-            url_ticket = URL_CARD + links_page
-            response = requests.get(url_ticket)
+        url_page_href = [fi.find("a").get('href') for fi in flight_items]
+        url_ticket = [URL_CARD + i for i in url_page_href]
+        for url_tic in url_ticket:
+            response = requests.get(url_tic)
             soup = BeautifulSoup(response.text, "lxml")
             data_ticket_road_soup = soup.find_all('div', class_='bus-stantion-info-text')
-
             start_ticket_route = data_ticket_road_soup[0].text.split(',')[0]
             end_ticket_route = data_ticket_road_soup[1].text.split(',')[0]
+
+            data_road_soup = soup.find('div',
+                                       class_="field field-name-field-path-following field-type-text-long field-label-hidden").find(
+                'div', class_="field-item even")
+            start_road = data_road_soup.text.split(',')[0]
+            end_road = data_road_soup.text.split(',')[-1]
 
             field_item_even = soup.find_all('div', class_="field-item")
             if len(field_item_even) != 6:
@@ -37,8 +42,6 @@ def get_url(url):
             else:
                 price_adult = field_item_even[3].text.strip()
                 price_children = field_item_even[4].text.strip()
-                start_road = field_item_even[5].text.split(',')[0]
-                end_road = field_item_even[5].text.split(',')[-1]
 
             time_default_soup = soup.find_all('div', class_="time-default")
             start_time_route = time_default_soup[0].text.strip()
