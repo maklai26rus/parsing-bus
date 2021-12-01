@@ -55,6 +55,7 @@ def get_url(url):
             with open('bus_route.cvc', "a", encoding="utf-8") as file:
                 for line in FLIGHT_DATA:
                     file.write(f"{line}\n")
+            FLIGHT_DATA.clear()
 
 
 def main():
