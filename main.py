@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 import requests
+import time
 
 URL = "https://ros-bilet.ru/perevozchik/evrotrans-ip-yacunov-sp?field_city_tid=&field_city_arrival_tid=&page=0%2C428"
 URL_CARD = "https://ros-bilet.ru"
@@ -34,14 +35,16 @@ def get_url(url):
             end_road = data_road_soup.text.split(',')[-1]
 
             field_item_even = soup.find_all('div', class_="field-item")
-            if len(field_item_even) != 6:
+            if len(field_item_even) == 8:
                 price_adult = field_item_even[4].text.strip()
                 price_children = field_item_even[5].text.strip()
-                start_road = field_item_even[6].text.split(',')[0]
-                end_road = field_item_even[6].text.split(',')[-1]
             else:
-                price_adult = field_item_even[3].text.strip()
-                price_children = field_item_even[4].text.strip()
+                if 'Акция! Раннее бронирование' == field_item_even[3].text.strip():
+                    price_adult = field_item_even[4].text.strip()
+                    price_children = field_item_even[5].text.strip()
+                else:
+                    price_adult = field_item_even[3].text.strip()
+                    price_children = field_item_even[4].text.strip()
 
             time_default_soup = soup.find_all('div', class_="time-default")
             start_time_route = time_default_soup[0].text.strip()
@@ -62,7 +65,10 @@ def get_url(url):
 
 
 def main():
+    tic = time.perf_counter()
     get_url(URL)
+    toc = time.perf_counter()
+    print(f"Вычисление заняло {toc - tic:0.4f} секунд")
 
 
 if __name__ == "__main__":
