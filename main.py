@@ -2,9 +2,14 @@ from bs4 import BeautifulSoup
 import requests
 import time
 
-URL = "https://ros-bilet.ru/perevozchik/evrotrans-ip-yacunov-sp?field_city_tid=&field_city_arrival_tid=&page=0%2C428"
+URL = "https://ros-bilet.ru/perevozchik/evrotrans-ip-yacunov-sp?field_city_tid=&field_city_arrival_tid=&page=0%2C429"
 URL_CARD = "https://ros-bilet.ru"
 FLIGHT_DATA = []
+# _str1 = 'Скидка'
+# _str2 = "Акция!"
+# _str3 = "Организованный"
+
+_err_str = ['Скидка', 'Акция!', 'Организованный']
 
 
 def get_url(url):
@@ -35,11 +40,15 @@ def get_url(url):
             end_road = data_road_soup.text.split(',')[-1]
 
             field_item_even = soup.find_all('div', class_="field-item")
+            _bad_position = [field_item_even[3].text.strip().find(i) for i in _err_str if
+                             field_item_even[3].text.strip().find(i) == 0]
             if len(field_item_even) == 8:
                 price_adult = field_item_even[4].text.strip()
                 price_children = field_item_even[5].text.strip()
             else:
-                if 'Акция! Раннее бронирование' == field_item_even[3].text.strip():
+                if _bad_position:
+                    # if field_item_even[3].text.strip().find(_str1) == 0 or field_item_even[3].text.strip().find(
+                    #         _str2) == 0:
                     price_adult = field_item_even[4].text.strip()
                     price_children = field_item_even[5].text.strip()
                 else:
