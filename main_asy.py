@@ -13,7 +13,9 @@ headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
                   '(KHTML, like Gecko) Chrome/81.0.4044.96 YaBrowser/20.4.0.1461 Yowser/2.5 Safari/537.36',
     'accept': '*/*'}
-tic = time.perf_counter()
+# tic = time.perf_counter()
+
+URL_TICKET_LIST = []
 
 
 async def get_page_data(session, page):
@@ -23,9 +25,10 @@ async def get_page_data(session, page):
         flight_items = soup.find_all("td", class_="views-field views-field-path")
         url_page_href = [fi.find("a").get('href') for fi in flight_items]
         url_ticket = [URL_CARD + i for i in url_page_href]
-        for url_tic in url_ticket:
-            response = requests.get(url_tic)
-            soup = BeautifulSoup(response.text, "lxml")
+
+    for url_tic in url_ticket:
+        async with session.get(url=url_tic, headers=headers) as response:
+            soup = BeautifulSoup(await response.text(), "lxml")
             data_ticket_road_soup = soup.find_all('div', class_='bus-stantion-info-text')
             start_ticket_route = data_ticket_road_soup[0].text.split(',')[0]
             end_ticket_route = data_ticket_road_soup[1].text.split(',')[0]
@@ -66,9 +69,6 @@ async def get_page_data(session, page):
                 for line in FLIGHT_DATA:
                     file.write(f"{line}\n")
             FLIGHT_DATA.clear()
-        print(f"[Info] страницы {page}")
-        toc = time.perf_counter()
-        print(f"Вычисление заняло {toc - tic:0.4f} секунд")
 
 
 async def gather_data():
@@ -79,16 +79,44 @@ async def gather_data():
         pages_count = int(soup.find("ul", class_="pager").find_all("a")[-1].text)
         tasks = []
 
-        for page in range(0, pages_count):
-
+        # for page in range(0, pages_count):
+        for page in range(0, 5):
             task = asyncio.create_task(get_page_data(session, page))
             tasks.append(task)
-            await asyncio.gather(*tasks)
+        await asyncio.gather(*tasks)
 
 
 def main():
+    tic = time.perf_counter()
     asyncio.run(gather_data())
+    toc = time.perf_counter()
+    print(f"Вычисление заняло {toc - tic:0.4f} секунд")
 
 
 if __name__ == "__main__":
     main()
+
+#
+# async def gather_data():
+#     async with aiohttp.ClientSession() as session:
+#         response = await session.get(URL, headers=headers)
+#
+#         soup = BeautifulSoup(await response.text(), "lxml")
+#         pages_count = int(soup.find("ul", class_="pager").find_all("a")[-1].text)
+#         tasks = []
+#
+#         for page in range(0, pages_count):
+#             url_page = f"https://ros-bilet.ru/perevozchik/evrotrans-ip-yacunov-sp?field_city_tid=&field_city_arrival_tid=&page=0%2C{page}"
+#             spisok_page.append(url_page)
+#             # async with session.get(url=url_page, headers=headers) as response:
+#             async with session.get(url=url_page, headers=headers) as response:
+#                 soup = BeautifulSoup(await response.text(), "lxml")
+#                 flight_items = soup.find_all("td", class_="views-field views-field-path")
+#                 url_page_href = [fi.find("a").get('href') for fi in flight_items]
+#                 url_ticket = [URL_CARD + i for i in url_page_href]
+#
+#             # task = asyncio.create_task(get_page_data(session, page))
+#
+#             task = asyncio.create_task(get_page_data(session, url_ticket))
+#             tasks.append(task)
+#             await asyncio.gather(*tasks)
