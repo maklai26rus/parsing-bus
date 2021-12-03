@@ -79,8 +79,8 @@ async def gather_data():
         pages_count = int(soup.find("ul", class_="pager").find_all("a")[-1].text)
         tasks = []
 
-        # for page in range(0, pages_count):
-        for page in range(0, 5):
+        for page in range(0, pages_count):
+        # for page in range(0, 5):
             task = asyncio.create_task(get_page_data(session, page))
             tasks.append(task)
         await asyncio.gather(*tasks)
