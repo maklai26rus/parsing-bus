@@ -8,7 +8,7 @@ URL = "https://ros-bilet.ru/perevozchik/evrotrans-ip-yacunov-sp?field_city_tid=&
 URL_CARD = "https://ros-bilet.ru"
 FLIGHT_DATA = []
 
-_err_str = ['Скидка', 'Акция!', 'Организованный']
+_err_str = ['Скидка', 'Акция!', 'Организованный', 'актуально']
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
                   '(KHTML, like Gecko) Chrome/81.0.4044.96 YaBrowser/20.4.0.1461 Yowser/2.5 Safari/537.36',
@@ -80,7 +80,7 @@ async def gather_data():
         tasks = []
 
         for page in range(0, pages_count):
-        # for page in range(0, 5):
+            # for page in range(0, 5):
             task = asyncio.create_task(get_page_data(session, page))
             tasks.append(task)
         await asyncio.gather(*tasks)
