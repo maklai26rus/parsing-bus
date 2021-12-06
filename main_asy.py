@@ -13,7 +13,6 @@ headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
                   '(KHTML, like Gecko) Chrome/81.0.4044.96 YaBrowser/20.4.0.1461 Yowser/2.5 Safari/537.36',
     'accept': '*/*'}
-# tic = time.perf_counter()
 
 URL_TICKET_LIST = []
 
@@ -96,27 +95,3 @@ def main():
 if __name__ == "__main__":
     main()
 
-#
-# async def gather_data():
-#     async with aiohttp.ClientSession() as session:
-#         response = await session.get(URL, headers=headers)
-#
-#         soup = BeautifulSoup(await response.text(), "lxml")
-#         pages_count = int(soup.find("ul", class_="pager").find_all("a")[-1].text)
-#         tasks = []
-#
-#         for page in range(0, pages_count):
-#             url_page = f"https://ros-bilet.ru/perevozchik/evrotrans-ip-yacunov-sp?field_city_tid=&field_city_arrival_tid=&page=0%2C{page}"
-#             spisok_page.append(url_page)
-#             # async with session.get(url=url_page, headers=headers) as response:
-#             async with session.get(url=url_page, headers=headers) as response:
-#                 soup = BeautifulSoup(await response.text(), "lxml")
-#                 flight_items = soup.find_all("td", class_="views-field views-field-path")
-#                 url_page_href = [fi.find("a").get('href') for fi in flight_items]
-#                 url_ticket = [URL_CARD + i for i in url_page_href]
-#
-#             # task = asyncio.create_task(get_page_data(session, page))
-#
-#             task = asyncio.create_task(get_page_data(session, url_ticket))
-#             tasks.append(task)
-#             await asyncio.gather(*tasks)
