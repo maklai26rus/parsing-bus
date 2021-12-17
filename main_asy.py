@@ -4,7 +4,7 @@ import time
 import aiohttp
 import asyncio
 
-URL = "https://ros-bilet.ru/perevozchik/evrotrans-ip-yacunov-sp?field_city_tid=&field_city_arrival_tid=&page=0%2C433"
+URL = "https://ros-bilet.ru/perevozchik/evrotrans-ip-yacunov-sp?field_city_tid=&field_city_arrival_tid=&page=0%2C438"
 URL_CARD = "https://ros-bilet.ru"
 FLIGHT_DATA = []
 
